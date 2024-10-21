@@ -11,15 +11,19 @@ import (
 )
 
 type BGPD struct {
+	FrrIP    string
 	NodesIP  []string
 	Protocol string
 }
 
 func main() {
 	nodeList := flag.String("nodes", "", "nodes ip")
+	frrIP := flag.String("frr", "", "frr ip")
 	flag.Parse()
+	fmt.Println(*frrIP)
 	fmt.Println(*nodeList)
 	data := BGPD{
+		FrrIP: *frrIP,
 		NodesIP: strings.Split(*nodeList, " "),
 	}
 

@@ -1,9 +1,11 @@
 router bgp 64512
+ bgp router-id {{ .FrrIP }}
  no bgp default ipv4-unicast
  no bgp network import-check
  
 {{- range $r := .NodesIP }}
  neighbor {{ . }} remote-as 64512
+ neighbor {{ . }} route-reflector-client
 {{- end }}
 
  address-family ipv4 unicast

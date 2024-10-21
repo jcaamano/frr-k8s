@@ -2,7 +2,7 @@ apiVersion: frrk8s.metallb.io/v1beta1
 kind: FRRConfiguration
 metadata:
   name: receive-all
-  namespace: frr-k8s-system
+  namespace: openshift-frr-k8s
 spec:
   bgp:
     routers:

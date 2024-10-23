@@ -1,5 +1,7 @@
 router bgp 64512
+{{- if .FrrIP }}
  bgp router-id {{ .FrrIP }}
+{{- end }}
  no bgp default ipv4-unicast
  no bgp network import-check
  

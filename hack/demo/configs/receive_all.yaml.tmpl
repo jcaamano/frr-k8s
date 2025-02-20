@@ -1,0 +1,48 @@
+apiVersion: frrk8s.metallb.io/v1beta1
+kind: FRRConfiguration
+metadata:
+  name: receive-all
+  labels:
+    name: receive-all
+spec:
+  bgp:
+    routers:
+    - asn: 64512
+      neighbors:
+{{- if .FrrIPv4 }}
+      - address: {{ .FrrIPv4 }} 
+        asn: 64512
+        disableMP: true
+        toReceive:
+          allowed:
+            mode: all
+{{- end }}
+{{- if .FrrIPv6 }}
+      - address: {{ .FrrIPv6 }} 
+        asn: 64512
+        disableMP: true
+        toReceive:
+          allowed:
+            mode: all
+{{- end }}
+{{- if .SsVRF }}
+    - asn: 64512
+      vrf: {{ .SsVRF }}
+      neighbors:
+{{- if .SsFrrIPv4 }}
+      - address: {{ .SsFrrIPv4 }} 
+        asn: 64512
+        disableMP: true
+        toReceive:
+          allowed:
+            mode: all
+{{- end }}
+{{- if .SsFrrIPv6 }}
+      - address: {{ .SsFrrIPv6 }} 
+        asn: 64512
+        disableMP: true
+        toReceive:
+          allowed:
+            mode: all
+{{- end }}
+{{- end }}

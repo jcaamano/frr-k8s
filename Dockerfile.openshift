@@ -40,6 +40,8 @@ RUN chmod a+x frr-reloader.sh
 FROM registry.ci.openshift.org/ocp/4.22:base-rhel9
 USER root
 
+ARG FRR_VERSION=10-10.4.3-1
+
 COPY --from=frrk8s-builder /frr-k8s/cmd/frr-k8s-controller/frr-k8s /
 COPY --from=frrk8s-builder /frr-k8s/cmd/statuscleaner/statuscleaner /
 COPY --from=frrk8s-builder /frr-k8s/cmd/reloader/frr-reloader.sh /
@@ -48,15 +50,19 @@ COPY --from=frrk8s-builder /frr-k8s/cmd/status/frr-status /
 
 ENV PYTHONDONTWRITEBYTECODE yes
 
+RUN dnf repoquery frr
+RUN dnf repoquery frr10
+RUN tail -n +1 $(find /etc/yum* -type f)
+
 RUN INSTALL_PKGS=" \
 	tcpdump libpcap \
 	iproute iputils strace socat \
-	frr \
+	frr${FRR_VERSION} \
 	python3 \
 	podman-catatonit" && \
-	yum install -y --setopt=tsflags=nodocs --setopt=skip_missing_names_on_install=False $INSTALL_PKGS
-
-RUN dnf -y update && yum clean all && rm -rf /var/cache/yum/* && rm -rf /var/cache/yum
+      env | grep -e ART -e __doozer_uuid_tag && \
+	ART_DNF_WRAPPER_DEBUG=1 dnf install -y --setopt=tsflags=nodocs --setopt=skip_missing_names_on_install=False $INSTALL_PKGS && \
+	dnf clean all && rm -rf /var/cache/yum
 
 # frr.sh is the entry point. This script examines environment
 # variables to direct operation and configure ovn
